@@ -1,9 +1,18 @@
 import { useForm } from "@mantine/form";
 import { zodResolver } from "mantine-form-zod-resolver";
-import { usePostApiV1Products } from "../../../api/types";
+import {
+  getGetApiV1ProductsQueryKey,
+  usePostApiV1Products,
+} from "../../../api/types";
 import { z } from "zod";
 import { Button, Flex, NumberInput, TextInput } from "@mantine/core";
 import { handleProblemDetailsError } from "../../../utils/error-utils.ts";
+import { useQueryClient } from "@tanstack/react-query";
+
+interface AddProductProps {
+  readonly pageIndex: number;
+  readonly pageSize: number;
+}
 
 const schema = z.object({
   name: z.string().min(1).max(50),
@@ -13,7 +22,9 @@ const schema = z.object({
 
 type Schema = z.infer<typeof schema>;
 
-const AddProduct = () => {
+const AddProduct = ({ pageIndex, pageSize }: AddProductProps) => {
+  const queryClient = useQueryClient();
+
   const form = useForm<Schema>({
     mode: "uncontrolled",
     initialValues: {
@@ -27,7 +38,12 @@ const AddProduct = () => {
   const { mutateAsync } = usePostApiV1Products({
     mutation: {
       onError: handleProblemDetailsError,
-      onSuccess: form.reset,
+      onSuccess: async () => {
+        form.reset();
+        await queryClient.refetchQueries({
+          queryKey: getGetApiV1ProductsQueryKey({ pageIndex, pageSize }),
+        });
+      },
     },
   });
 
