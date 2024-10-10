@@ -33,8 +33,9 @@ public class Program
 
         builder.Services.AddProblemDetails();
 
-        builder.Services.AddInfrastructureData(builder.Configuration.GetConnectionString("Postgres"));
-        builder.Services.AddCatalogApplication();
+        builder.Services
+            .AddInfrastructureData(builder.Configuration.GetConnectionString("Postgres"))
+            .AddCatalogApplication();
 
         var app = builder.Build();
 

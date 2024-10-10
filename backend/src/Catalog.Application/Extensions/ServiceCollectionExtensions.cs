@@ -9,9 +9,9 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCatalogApplication(this IServiceCollection services)
     {
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
-        services.AddCommandHandlers(Assembly.GetExecutingAssembly());
-
-        return services;
+        return services
+            .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true)
+            .AddCommandHandlers(Assembly.GetExecutingAssembly())
+            .AddQueryHandlers(Assembly.GetExecutingAssembly());
     }
 }
