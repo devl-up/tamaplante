@@ -13,8 +13,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructureData(this IServiceCollection services, string? connectionString)
     {
-        if (string.IsNullOrWhiteSpace(connectionString)) throw new ArgumentNullException(nameof(connectionString));
-
         services.AddDbContext<AppDbContext>(builder => builder.UseNpgsql(connectionString));
         services.AddScoped<IUnitOfWork, EfUnitOfWork>();
         services.AddTransient<IQueryProcessor, EfQueryProcessor>();
