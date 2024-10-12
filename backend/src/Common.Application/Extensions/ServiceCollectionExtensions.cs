@@ -7,28 +7,23 @@ namespace Common.Application.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCommandHandlers(this IServiceCollection services, Assembly assembly)
+    public static IServiceCollection AddHandlers(this IServiceCollection services, Assembly assembly)
     {
-        var handlers = assembly.GetTypes()
+        var commandHandlers = assembly.GetTypes()
             .Where(type => type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICommandHandler<>)))
             .ToList();
 
-        foreach (var handler in handlers)
+        foreach (var handler in commandHandlers)
         {
             var handlerInterface = handler.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICommandHandler<>));
             services.AddTransient(handlerInterface, handler);
         }
-
-        return services;
-    }
-
-    public static IServiceCollection AddQueryHandlers(this IServiceCollection services, Assembly assembly)
-    {
-        var handlers = assembly.GetTypes()
+        
+        var queryHandlers = assembly.GetTypes()
             .Where(type => type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IQueryHandler<,>)))
             .ToList();
 
-        foreach (var handler in handlers)
+        foreach (var handler in queryHandlers)
         {
             var handlerInterface = handler.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IQueryHandler<,>));
             services.AddTransient(handlerInterface, handler);
