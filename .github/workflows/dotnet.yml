@@ -6,7 +6,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  backend-pr-build:
     runs-on: ubuntu-latest
     defaults:
       run:
