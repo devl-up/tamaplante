@@ -1,0 +1,14 @@
+name: backend-pr
+
+on:
+  pull_request:
+    branches:
+    - "main"
+    paths-ignore: 
+    - "backend/**"
+
+jobs:
+  backend-pr-build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No backend build required"'
