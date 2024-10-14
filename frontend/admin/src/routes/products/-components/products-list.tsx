@@ -1,7 +1,10 @@
-import { useGetApiV1Products } from "../../../api/types";
-import { Checkbox, Flex, Table } from "@mantine/core";
+import {
+  useDeleteApiV1Products,
+  useGetApiV1Products,
+} from "../../../api/types";
+import { Button, Checkbox, Flex, Table } from "@mantine/core";
 import TablePagination from "../../../components/table-pagination.tsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface ProductsListProps {
   readonly pageIndex: number;
@@ -18,17 +21,36 @@ const ProductsList = ({
 }: ProductsListProps) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
-  const { data } = useGetApiV1Products({
+  const productsQuery = useGetApiV1Products({
     pageIndex,
     pageSize,
   });
 
+  const deleteMutation = useDeleteApiV1Products({
+    mutation: {
+      onSuccess: async (_, variables) => {
+        const total = productsQuery.data?.total ?? 0;
+        const newTotal = total - variables.data.productIds.length;
+
+        if (pageIndex !== 0 && newTotal < pageIndex * pageSize + 1) {
+          setPageIndex(pageIndex - 1);
+        } else {
+          await productsQuery.refetch();
+        }
+      },
+    },
+  });
+
+  const handleDelete = useCallback(async () => {
+    await deleteMutation.mutateAsync({ data: { productIds: selectedRows } });
+  }, [deleteMutation, selectedRows]);
+
   useEffect(() => {
     setSelectedRows([]);
-  }, [data?.products]);
+  }, [productsQuery.data?.products]);
 
   const rows =
-    data?.products.map((p) => (
+    productsQuery.data?.products.map((p) => (
       <Table.Tr key={p.id}>
         <Table.Td>
           <Checkbox
@@ -49,7 +71,17 @@ const ProductsList = ({
     )) ?? [];
 
   return (
-    <Flex direction="column" gap="md">
+    <Flex direction="column" gap="xs">
+      <Flex>
+        <Button
+          color="red"
+          disabled={!selectedRows.length}
+          loading={deleteMutation.isPending}
+          onClick={handleDelete}
+        >
+          DELETE
+        </Button>
+      </Flex>
       <Table>
         <Table.Thead>
           <Table.Tr>
@@ -62,7 +94,7 @@ const ProductsList = ({
         <Table.Tbody>{rows}</Table.Tbody>
       </Table>
       <TablePagination
-        total={data?.total ?? 0}
+        total={productsQuery.data?.total ?? 0}
         pageIndex={pageIndex}
         setPageIndex={setPageIndex}
         pageSize={pageSize}
