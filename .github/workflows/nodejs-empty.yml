@@ -1,0 +1,14 @@
+name: frontend-admin-pr
+
+on:
+  pull_request:
+    branches:
+    - "main"
+    paths-ignore: 
+    - "frontend/admin/**"
+
+jobs:
+  frontend-admin-pr-build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No frontend admin build required"'
