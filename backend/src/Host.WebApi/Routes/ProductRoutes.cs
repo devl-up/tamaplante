@@ -14,6 +14,14 @@ internal static class ProductRoutes
         var group = api.MapGroup("products")
             .WithTags("Products");
 
+        group.MapGet("", async ([FromServices] IQueryHandler<GetProducts.Query, GetProducts.Result> handler, [FromQuery] int pageIndex, [FromQuery] int pageSize) =>
+            {
+                var result = await handler.HandleAsync(new(pageIndex, pageSize));
+                return Results.Ok(result);
+            })
+            .Produces<GetProducts.Result>()
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
         group.MapPost("", async ([FromServices] ICommandHandler<AddProduct.Command> handler, [FromBody] AddProduct.Command command) =>
             {
                 var result = await handler.HandleAsync(command);
@@ -23,12 +31,13 @@ internal static class ProductRoutes
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
-        group.MapGet("", async ([FromServices] IQueryHandler<GetProducts.Query, GetProducts.Result> handler, [FromQuery] int pageIndex, [FromQuery] int pageSize) =>
+        group.MapDelete("", async ([FromServices] ICommandHandler<DeleteProducts.Command> handler, [FromBody] DeleteProducts.Command command) =>
             {
-                var result = await handler.HandleAsync(new(pageIndex, pageSize));
-                return Results.Ok(result);
+                var result = await handler.HandleAsync(command);
+                return result.ToHttp();
             })
-            .Produces<GetProducts.Result>()
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
 }

@@ -50,6 +50,10 @@ export interface CatalogProductsQueriesGetProductsResult {
   total: number;
 }
 
+export interface CatalogProductsDeleteProductsCommand {
+  productIds: string[];
+}
+
 export interface CatalogProductsAddProductCommand {
   description: string;
   id: string;
@@ -58,81 +62,6 @@ export interface CatalogProductsAddProductCommand {
 }
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
-
-export const postApiV1Products = (
-  catalogProductsAddProductCommand: BodyType<CatalogProductsAddProductCommand>,
-  options?: SecondParameter<typeof customInstance>,
-) => {
-  return customInstance<void>(
-    {
-      url: `/api/v1/products`,
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      data: catalogProductsAddProductCommand,
-    },
-    options,
-  );
-};
-
-export const getPostApiV1ProductsMutationOptions = <
-  TError = ErrorType<ProblemDetails>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postApiV1Products>>,
-    TError,
-    { data: BodyType<CatalogProductsAddProductCommand> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof postApiV1Products>>,
-  TError,
-  { data: BodyType<CatalogProductsAddProductCommand> },
-  TContext
-> => {
-  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof postApiV1Products>>,
-    { data: BodyType<CatalogProductsAddProductCommand> }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return postApiV1Products(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type PostApiV1ProductsMutationResult = NonNullable<
-  Awaited<ReturnType<typeof postApiV1Products>>
->;
-export type PostApiV1ProductsMutationBody =
-  BodyType<CatalogProductsAddProductCommand>;
-export type PostApiV1ProductsMutationError = ErrorType<ProblemDetails>;
-
-export const usePostApiV1Products = <
-  TError = ErrorType<ProblemDetails>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postApiV1Products>>,
-    TError,
-    { data: BodyType<CatalogProductsAddProductCommand> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationResult<
-  Awaited<ReturnType<typeof postApiV1Products>>,
-  TError,
-  { data: BodyType<CatalogProductsAddProductCommand> },
-  TContext
-> => {
-  const mutationOptions = getPostApiV1ProductsMutationOptions(options);
-
-  return useMutation(mutationOptions);
-};
 
 export const getApiV1Products = (
   params: GetApiV1ProductsParams,
@@ -277,3 +206,153 @@ export function useGetApiV1Products<
 
   return query;
 }
+
+export const postApiV1Products = (
+  catalogProductsAddProductCommand: BodyType<CatalogProductsAddProductCommand>,
+  options?: SecondParameter<typeof customInstance>,
+) => {
+  return customInstance<void>(
+    {
+      url: `/api/v1/products`,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      data: catalogProductsAddProductCommand,
+    },
+    options,
+  );
+};
+
+export const getPostApiV1ProductsMutationOptions = <
+  TError = ErrorType<ProblemDetails>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiV1Products>>,
+    TError,
+    { data: BodyType<CatalogProductsAddProductCommand> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postApiV1Products>>,
+  TError,
+  { data: BodyType<CatalogProductsAddProductCommand> },
+  TContext
+> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postApiV1Products>>,
+    { data: BodyType<CatalogProductsAddProductCommand> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return postApiV1Products(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostApiV1ProductsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postApiV1Products>>
+>;
+export type PostApiV1ProductsMutationBody =
+  BodyType<CatalogProductsAddProductCommand>;
+export type PostApiV1ProductsMutationError = ErrorType<ProblemDetails>;
+
+export const usePostApiV1Products = <
+  TError = ErrorType<ProblemDetails>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiV1Products>>,
+    TError,
+    { data: BodyType<CatalogProductsAddProductCommand> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof postApiV1Products>>,
+  TError,
+  { data: BodyType<CatalogProductsAddProductCommand> },
+  TContext
+> => {
+  const mutationOptions = getPostApiV1ProductsMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
+
+export const deleteApiV1Products = (
+  catalogProductsDeleteProductsCommand: BodyType<CatalogProductsDeleteProductsCommand>,
+  options?: SecondParameter<typeof customInstance>,
+) => {
+  return customInstance<void>(
+    {
+      url: `/api/v1/products`,
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      data: catalogProductsDeleteProductsCommand,
+    },
+    options,
+  );
+};
+
+export const getDeleteApiV1ProductsMutationOptions = <
+  TError = ErrorType<ProblemDetails>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteApiV1Products>>,
+    TError,
+    { data: BodyType<CatalogProductsDeleteProductsCommand> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteApiV1Products>>,
+  TError,
+  { data: BodyType<CatalogProductsDeleteProductsCommand> },
+  TContext
+> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteApiV1Products>>,
+    { data: BodyType<CatalogProductsDeleteProductsCommand> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return deleteApiV1Products(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteApiV1ProductsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteApiV1Products>>
+>;
+export type DeleteApiV1ProductsMutationBody =
+  BodyType<CatalogProductsDeleteProductsCommand>;
+export type DeleteApiV1ProductsMutationError = ErrorType<ProblemDetails>;
+
+export const useDeleteApiV1Products = <
+  TError = ErrorType<ProblemDetails>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteApiV1Products>>,
+    TError,
+    { data: BodyType<CatalogProductsDeleteProductsCommand> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteApiV1Products>>,
+  TError,
+  { data: BodyType<CatalogProductsDeleteProductsCommand> },
+  TContext
+> => {
+  const mutationOptions = getDeleteApiV1ProductsMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
