@@ -16,16 +16,14 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
-	cache: 'npm'
-        cache-dependency-path: './frontend/admin/package-lock.json'
-
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
+        cache-dependency-path: "./frontend/admin/package-lock.json"
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        cache: "npm"
     - name: Install packages
       run: npm ci
     - name: Build
