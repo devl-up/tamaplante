@@ -16,6 +16,8 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
+	cache: 'npm'
+        cache-dependency-path: './frontend/admin/package-lock.json'
 
     steps:
     - uses: actions/checkout@v4
