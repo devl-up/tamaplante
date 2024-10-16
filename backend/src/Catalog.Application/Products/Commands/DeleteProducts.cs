@@ -13,7 +13,7 @@ public static class DeleteProducts
     {
         public async Task<Result> HandleAsync(Command command)
         {
-            var products = await productRepository.GetProducts(command.ProductIds);
+            var products = await productRepository.GetProductsAsync(command.ProductIds);
             if (products.Count != command.ProductIds.Count) return Result.Fail("delete-product-count");
 
             productRepository.Delete(products);

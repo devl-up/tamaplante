@@ -12,7 +12,7 @@ public static class GetProducts
 
     public sealed record Result(List<Dto> Products, int Total);
 
-    private sealed class Handler(IQueryProcessor queryProcessor) : IQueryHandler<Query, Result>
+    public sealed class Handler(IQueryProcessor queryProcessor) : IQueryHandler<Query, Result>
     {
         public async Task<Result> HandleAsync(Query query)
         {

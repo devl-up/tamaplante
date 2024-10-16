@@ -50,6 +50,13 @@ export interface CatalogProductsQueriesGetProductsResult {
   total: number;
 }
 
+export interface CatalogProductsEditProductCommand {
+  description: string;
+  id: string;
+  name: string;
+  price: number;
+}
+
 export interface CatalogProductsDeleteProductsCommand {
   productIds: string[];
 }
@@ -278,6 +285,81 @@ export const usePostApiV1Products = <
   TContext
 > => {
   const mutationOptions = getPostApiV1ProductsMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
+
+export const putApiV1Products = (
+  catalogProductsEditProductCommand: BodyType<CatalogProductsEditProductCommand>,
+  options?: SecondParameter<typeof customInstance>,
+) => {
+  return customInstance<void>(
+    {
+      url: `/api/v1/products`,
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      data: catalogProductsEditProductCommand,
+    },
+    options,
+  );
+};
+
+export const getPutApiV1ProductsMutationOptions = <
+  TError = ErrorType<ProblemDetails>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putApiV1Products>>,
+    TError,
+    { data: BodyType<CatalogProductsEditProductCommand> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof putApiV1Products>>,
+  TError,
+  { data: BodyType<CatalogProductsEditProductCommand> },
+  TContext
+> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof putApiV1Products>>,
+    { data: BodyType<CatalogProductsEditProductCommand> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return putApiV1Products(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PutApiV1ProductsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof putApiV1Products>>
+>;
+export type PutApiV1ProductsMutationBody =
+  BodyType<CatalogProductsEditProductCommand>;
+export type PutApiV1ProductsMutationError = ErrorType<ProblemDetails>;
+
+export const usePutApiV1Products = <
+  TError = ErrorType<ProblemDetails>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putApiV1Products>>,
+    TError,
+    { data: BodyType<CatalogProductsEditProductCommand> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof putApiV1Products>>,
+  TError,
+  { data: BodyType<CatalogProductsEditProductCommand> },
+  TContext
+> => {
+  const mutationOptions = getPutApiV1ProductsMutationOptions(options);
 
   return useMutation(mutationOptions);
 };
