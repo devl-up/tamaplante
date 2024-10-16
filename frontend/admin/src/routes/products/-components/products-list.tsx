@@ -4,22 +4,18 @@ import {
 } from "../../../api/types";
 import { Button, Checkbox, Flex, Table } from "@mantine/core";
 import TablePagination from "../../../components/table-pagination.tsx";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useDisclosure } from "@mantine/hooks";
+import AddProduct from "./add-product.tsx";
+import EditProduct from "./edit-product.tsx";
 
-interface ProductsListProps {
-  readonly pageIndex: number;
-  readonly setPageIndex: (index: number) => void;
-  readonly pageSize: number;
-  readonly setPageSize: (index: number) => void;
-}
-
-const ProductsList = ({
-  pageIndex,
-  setPageIndex,
-  pageSize,
-  setPageSize,
-}: ProductsListProps) => {
+const ProductsList = () => {
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [addOpened, { open: openAdd, close: closeAdd }] = useDisclosure(false);
+  const [editOpened, { open: openEdit, close: closeEdit }] =
+    useDisclosure(false);
 
   const productsQuery = useGetApiV1Products({
     pageIndex,
@@ -49,6 +45,14 @@ const ProductsList = ({
     setSelectedRows([]);
   }, [productsQuery.data?.products]);
 
+  const selectedProduct = useMemo(() => {
+    if (selectedRows.length !== 1) return;
+
+    return productsQuery.data?.products.find(
+      (product) => product.id === selectedRows[0],
+    );
+  }, [productsQuery.data?.products, selectedRows]);
+
   const rows =
     productsQuery.data?.products.map((p) => (
       <Table.Tr key={p.id}>
@@ -71,36 +75,61 @@ const ProductsList = ({
     )) ?? [];
 
   return (
-    <Flex direction="column" gap="xs">
-      <Flex>
-        <Button
-          color="red"
-          disabled={!selectedRows.length}
-          loading={deleteMutation.isPending}
-          onClick={handleDelete}
-        >
-          DELETE
-        </Button>
-      </Flex>
-      <Table>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th></Table.Th>
-            <Table.Th>Name</Table.Th>
-            <Table.Th>Description</Table.Th>
-            <Table.Th>Price</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>{rows}</Table.Tbody>
-      </Table>
-      <TablePagination
-        total={productsQuery.data?.total ?? 0}
-        pageIndex={pageIndex}
-        setPageIndex={setPageIndex}
-        pageSize={pageSize}
-        sePageSize={setPageSize}
+    <>
+      <AddProduct
+        opened={addOpened}
+        onSave={productsQuery.refetch}
+        onClose={closeAdd}
       />
-    </Flex>
+      {selectedProduct && (
+        <EditProduct
+          product={selectedProduct}
+          opened={editOpened}
+          onSave={productsQuery.refetch}
+          onClose={closeEdit}
+        />
+      )}
+      <Flex direction="column" gap="xs">
+        <Flex gap="xs">
+          <Button color="green" onClick={openAdd}>
+            ADD
+          </Button>
+          <Button
+            color="blue"
+            onClick={openEdit}
+            disabled={selectedRows.length !== 1}
+          >
+            EDIT
+          </Button>
+          <Button
+            color="red"
+            disabled={!selectedRows.length}
+            loading={deleteMutation.isPending}
+            onClick={handleDelete}
+          >
+            DELETE
+          </Button>
+        </Flex>
+        <Table>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th></Table.Th>
+              <Table.Th>Name</Table.Th>
+              <Table.Th>Description</Table.Th>
+              <Table.Th>Price</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>{rows}</Table.Tbody>
+        </Table>
+        <TablePagination
+          total={productsQuery.data?.total ?? 0}
+          pageIndex={pageIndex}
+          setPageIndex={setPageIndex}
+          pageSize={pageSize}
+          sePageSize={setPageSize}
+        />
+      </Flex>
+    </>
   );
 };
 

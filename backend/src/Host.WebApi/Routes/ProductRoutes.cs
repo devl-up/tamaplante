@@ -31,6 +31,15 @@ internal static class ProductRoutes
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
+        group.MapPut("", async ([FromServices] ICommandHandler<EditProduct.Command> handler, [FromBody] EditProduct.Command command) =>
+            {
+                var result = await handler.HandleAsync(command);
+                return result.ToHttp();
+            })
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
         group.MapDelete("", async ([FromServices] ICommandHandler<DeleteProducts.Command> handler, [FromBody] DeleteProducts.Command command) =>
             {
                 var result = await handler.HandleAsync(command);

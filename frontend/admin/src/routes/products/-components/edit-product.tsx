@@ -1,11 +1,15 @@
 import { useForm } from "@mantine/form";
 import { zodResolver } from "mantine-form-zod-resolver";
-import { usePostApiV1Products } from "../../../api/types";
+import {
+  CatalogProductsQueriesGetProductsDto,
+  usePutApiV1Products,
+} from "../../../api/types";
 import { z } from "zod";
 import { Button, Flex, Modal, NumberInput, TextInput } from "@mantine/core";
 import { handleProblemDetailsError } from "../../../utils/error-utils.ts";
 
-interface AddProductProps {
+interface EditProductProps {
+  readonly product: CatalogProductsQueriesGetProductsDto;
   readonly opened: boolean;
   readonly onClose: () => void;
   readonly onSave: () => void;
@@ -19,18 +23,23 @@ const schema = z.object({
 
 type Schema = z.infer<typeof schema>;
 
-const AddProduct = ({ opened, onClose, onSave }: AddProductProps) => {
+const EditProduct = ({
+  product,
+  opened,
+  onClose,
+  onSave,
+}: EditProductProps) => {
   const form = useForm<Schema>({
     mode: "uncontrolled",
     initialValues: {
-      name: "",
-      description: "",
-      price: 0,
+      name: product.name,
+      description: product.description,
+      price: product.price,
     },
     validate: zodResolver(schema),
   });
 
-  const { mutateAsync } = usePostApiV1Products({
+  const { mutateAsync } = usePutApiV1Products({
     mutation: {
       onError: handleProblemDetailsError,
       onSuccess: () => {
@@ -45,13 +54,13 @@ const AddProduct = ({ opened, onClose, onSave }: AddProductProps) => {
     await mutateAsync({
       data: {
         ...values,
-        id: crypto.randomUUID(),
+        id: product.id,
       },
     });
   });
 
   return (
-    <Modal opened={opened} onClose={onClose} title={"Add Product"}>
+    <Modal opened={opened} onClose={onClose} title={"Edit Product"}>
       <form onSubmit={handleSubmit}>
         <Flex direction="column" align="flex-start" gap="sm">
           <TextInput
@@ -78,7 +87,7 @@ const AddProduct = ({ opened, onClose, onSave }: AddProductProps) => {
             min={0}
           />
           <Flex gap="xs" justify="flex-end">
-            <Button type="submit">Add</Button>
+            <Button type="submit">Save</Button>
             <Button type="button" variant="default" onClick={onClose}>
               Cancel
             </Button>
@@ -89,4 +98,4 @@ const AddProduct = ({ opened, onClose, onSave }: AddProductProps) => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;

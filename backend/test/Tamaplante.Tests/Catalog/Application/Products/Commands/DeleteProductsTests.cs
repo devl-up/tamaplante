@@ -32,7 +32,7 @@ public sealed class DeleteProductsTests
             new() { Id = command.ProductIds[2], Name = "Name 3", Description = "Description 3", Price = 10 }
         };
 
-        _productRepositoryMock.Setup(r => r.GetProducts(command.ProductIds)).ReturnsAsync(() => products);
+        _productRepositoryMock.Setup(r => r.GetProductsAsync(command.ProductIds)).ReturnsAsync(() => products);
 
         // Act
         var result = await _sut.HandleAsync(command);

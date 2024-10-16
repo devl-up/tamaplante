@@ -1,12 +1,11 @@
-﻿using Catalog.Domain.Products.Entities;
-using Catalog.Domain.Products.Repositories;
+﻿using Catalog.Domain.Products.Repositories;
 using Common.Application.Commands;
 using Common.Application.Models;
 using FluentValidation;
 
 namespace Catalog.Application.Products.Commands;
 
-public static class AddProduct
+public static class EditProduct
 {
     public sealed record Command(Guid Id, string Name, string Description, decimal Price) : ICommand;
 
@@ -17,17 +16,14 @@ public static class AddProduct
             var (id, name, description, price) = command;
 
             var validationResult = await validator.ValidateAsync(command);
-            if (!validationResult.IsValid) return Result.Fail("add-product-validation");
+            if (!validationResult.IsValid) return Result.Fail("edit-product-validation");
 
-            var product = new Product
-            {
-                Id = id,
-                Name = name,
-                Description = description,
-                Price = price
-            };
+            var product = await productRepository.GetByIdAsync(id);
 
-            await productRepository.AddAsync(product);
+            product.Name = name;
+            product.Description = description;
+            product.Price = price;
+
             await unitOfWork.CommitAsync();
 
             return Result.Ok();
