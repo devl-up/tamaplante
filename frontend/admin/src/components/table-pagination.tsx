@@ -17,8 +17,8 @@ const TablePagination = ({
   sePageSize,
 }: TablePaginationProps) => {
   const current = useMemo(
-    () => pageIndex * pageSize + 1,
-    [pageIndex, pageSize],
+    () => (total === 0 ? 0 : pageIndex * pageSize + 1),
+    [pageIndex, pageSize, total],
   );
 
   const next = useMemo(() => {

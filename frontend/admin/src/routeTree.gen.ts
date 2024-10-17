@@ -17,6 +17,7 @@ import { Route as rootRoute } from './routes/__root'
 // Create Virtual Routes
 
 const IndexLazyImport = createFileRoute('/')()
+const TagsIndexLazyImport = createFileRoute('/tags/')()
 const ProductsIndexLazyImport = createFileRoute('/products/')()
 
 // Create/Update Routes
@@ -25,6 +26,11 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const TagsIndexLazyRoute = TagsIndexLazyImport.update({
+  path: '/tags/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/tags/index.lazy').then((d) => d.Route))
 
 const ProductsIndexLazyRoute = ProductsIndexLazyImport.update({
   path: '/products/',
@@ -51,6 +57,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsIndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/tags/': {
+      id: '/tags/'
+      path: '/tags'
+      fullPath: '/tags'
+      preLoaderRoute: typeof TagsIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -59,36 +72,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/products': typeof ProductsIndexLazyRoute
+  '/tags': typeof TagsIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/products': typeof ProductsIndexLazyRoute
+  '/tags': typeof TagsIndexLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/products/': typeof ProductsIndexLazyRoute
+  '/tags/': typeof TagsIndexLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/products'
+  fullPaths: '/' | '/products' | '/tags'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/products'
-  id: '__root__' | '/' | '/products/'
+  to: '/' | '/products' | '/tags'
+  id: '__root__' | '/' | '/products/' | '/tags/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   ProductsIndexLazyRoute: typeof ProductsIndexLazyRoute
+  TagsIndexLazyRoute: typeof TagsIndexLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   ProductsIndexLazyRoute: ProductsIndexLazyRoute,
+  TagsIndexLazyRoute: TagsIndexLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -104,7 +122,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/products/"
+        "/products/",
+        "/tags/"
       ]
     },
     "/": {
@@ -112,6 +131,9 @@ export const routeTree = rootRoute
     },
     "/products/": {
       "filePath": "products/index.lazy.tsx"
+    },
+    "/tags/": {
+      "filePath": "tags/index.lazy.tsx"
     }
   }
 }

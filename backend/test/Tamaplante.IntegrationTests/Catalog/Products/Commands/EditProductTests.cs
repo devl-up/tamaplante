@@ -6,7 +6,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Tamaplante.IntegrationTests.Common;
 
-namespace Tamaplante.IntegrationTests.Catalog.Commands;
+namespace Tamaplante.IntegrationTests.Catalog.Products.Commands;
 
 [Collection("IntegrationTests")]
 public sealed class EditProductTest(IntegrationFixture integrationFixture)

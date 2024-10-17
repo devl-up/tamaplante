@@ -59,6 +59,7 @@ public class Program
         var v1 = api.MapGroup("v1");
 
         v1.MapProductRoutes();
+        v1.MapTagRoutes();
 
         app.Run();
     }
