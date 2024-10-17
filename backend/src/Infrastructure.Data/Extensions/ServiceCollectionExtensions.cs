@@ -1,4 +1,5 @@
 ﻿using Catalog.Domain.Products.Repositories;
+using Catalog.Domain.Tags.Repositories;
 using Common.Application.Commands;
 using Common.Application.Queries;
 using Infrastructure.Data.Common;
@@ -18,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IQueryProcessor, EfQueryProcessor>();
         
         services.AddTransient<IProductRepository, EfProductRepository>();
+        services.AddTransient<ITagRepository, EfTagRepository>();
 
         return services;
     }

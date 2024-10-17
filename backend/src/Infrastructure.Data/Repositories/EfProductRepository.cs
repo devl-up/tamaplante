@@ -14,7 +14,7 @@ internal sealed class EfProductRepository(AppDbContext context) : IProductReposi
 
     public Task AddAsync(Product product)
     {
-        return context.Set<Product>().AddRangeAsync(product);
+        return context.Set<Product>().AddAsync(product).AsTask();
     }
 
     public void Delete(List<Product> products)
