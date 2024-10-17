@@ -42,6 +42,7 @@ function Root() {
           label="Products"
           to={routesByPath["/products"].to}
         />
+        <NavLink component={Link} label="Tags" to={routesByPath["/tags"].to} />
       </AppShell.Navbar>
       <AppShell.Main bg="#F5F7FA">
         <Outlet />

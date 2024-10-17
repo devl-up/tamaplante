@@ -4,7 +4,7 @@ using Catalog.Domain.Products.Entities;
 using FluentAssertions;
 using Tamaplante.IntegrationTests.Common;
 
-namespace Tamaplante.IntegrationTests.Catalog.Queries;
+namespace Tamaplante.IntegrationTests.Catalog.Products.Queries;
 
 [Collection("IntegrationTests")]
 public sealed class GetProductsTests(IntegrationFixture integrationFixture)
