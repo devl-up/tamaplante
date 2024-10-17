@@ -53,6 +53,11 @@ export interface CatalogTagsQueriesGetTagsResult {
   total: number;
 }
 
+export interface CatalogTagsAddTagCommand {
+  id: string;
+  name: string;
+}
+
 export interface CatalogProductsQueriesGetProductsDto {
   description: string;
   id: string;
@@ -576,3 +581,77 @@ export function useGetApiV1Tags<
 
   return query;
 }
+
+export const postApiV1Tags = (
+  catalogTagsAddTagCommand: BodyType<CatalogTagsAddTagCommand>,
+  options?: SecondParameter<typeof customInstance>,
+) => {
+  return customInstance<void>(
+    {
+      url: `/api/v1/tags`,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      data: catalogTagsAddTagCommand,
+    },
+    options,
+  );
+};
+
+export const getPostApiV1TagsMutationOptions = <
+  TError = ErrorType<ProblemDetails>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiV1Tags>>,
+    TError,
+    { data: BodyType<CatalogTagsAddTagCommand> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postApiV1Tags>>,
+  TError,
+  { data: BodyType<CatalogTagsAddTagCommand> },
+  TContext
+> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postApiV1Tags>>,
+    { data: BodyType<CatalogTagsAddTagCommand> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return postApiV1Tags(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostApiV1TagsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postApiV1Tags>>
+>;
+export type PostApiV1TagsMutationBody = BodyType<CatalogTagsAddTagCommand>;
+export type PostApiV1TagsMutationError = ErrorType<ProblemDetails>;
+
+export const usePostApiV1Tags = <
+  TError = ErrorType<ProblemDetails>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiV1Tags>>,
+    TError,
+    { data: BodyType<CatalogTagsAddTagCommand> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof postApiV1Tags>>,
+  TError,
+  { data: BodyType<CatalogTagsAddTagCommand> },
+  TContext
+> => {
+  const mutationOptions = getPostApiV1TagsMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};

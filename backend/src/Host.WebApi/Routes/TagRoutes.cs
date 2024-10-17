@@ -1,5 +1,8 @@
-﻿using Catalog.Application.Tags.Queries;
+﻿using Catalog.Application.Tags.Commands;
+using Catalog.Application.Tags.Queries;
+using Common.Application.Commands;
 using Common.Application.Queries;
+using Host.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Host.WebApi.Routes;
@@ -17,6 +20,15 @@ internal static class TagRoutes
                 return Results.Ok(result);
             })
             .Produces<GetTags.Result>()
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
+        group.MapPost("", async ([FromServices] ICommandHandler<AddTag.Command> handler, [FromBody] AddTag.Command command) =>
+            {
+                var result = await handler.HandleAsync(command);
+                return result.ToHttp();
+            })
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
 }

@@ -55,7 +55,14 @@ const ProductsList = () => {
 
   const rows =
     productsQuery.data?.products.map((p) => (
-      <Table.Tr key={p.id}>
+      <Table.Tr
+        key={p.id}
+        bg={
+          selectedRows.includes(p.id)
+            ? "var(--mantine-color-blue-light)"
+            : undefined
+        }
+      >
         <Table.Td>
           <Checkbox
             checked={selectedRows.includes(p.id)}
@@ -113,7 +120,7 @@ const ProductsList = () => {
         <Table>
           <Table.Thead>
             <Table.Tr>
-              <Table.Th></Table.Th>
+              <Table.Th />
               <Table.Th>Name</Table.Th>
               <Table.Th>Description</Table.Th>
               <Table.Th>Price</Table.Th>
