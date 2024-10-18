@@ -27,7 +27,15 @@ public sealed class AddTagTest(IntegrationFixture integrationFixture)
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         await using var dbContext = integrationFixture.CreateDbContext();
-        var tag = await dbContext.Set<Tag>().FirstOrDefaultAsync(x => x.Id == command.Id);
-        tag.Should().NotBeNull();
+
+        var expectedTag = new Tag
+        {
+            Id = command.Id,
+            Name = command.Name
+        };
+
+        var actualTag = await dbContext.Set<Tag>().FirstOrDefaultAsync(x => x.Id == command.Id);
+        actualTag.Should().NotBeNull();
+        actualTag.Should().BeEquivalentTo(expectedTag);
     }
 }

@@ -16,7 +16,7 @@ public sealed class AddProductValidatorTests
     [InlineData("00000000-0000-0000-0000-000000000000", "name", "description", 0, false)]
     public async Task Should_Fail_When_Invalid_Command(string id, string name, string description, decimal price, bool valid)
     {
-        var command = new AddProduct.Command(Guid.Parse(id), name, description, price);
+        var command = new AddProduct.Command(Guid.Parse(id), name, description, price, []);
         var result = await _sut.TestValidateAsync(command);
         result.IsValid.Should().Be(valid);
     }

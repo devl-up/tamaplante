@@ -24,5 +24,8 @@ internal sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(x => x.Price)
             .IsRequired()
             .HasPrecision(18, 2);
+
+        builder.HasMany(p => p.Tags)
+            .WithMany();
     }
 }

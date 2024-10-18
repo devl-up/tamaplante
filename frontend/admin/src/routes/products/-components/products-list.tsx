@@ -2,7 +2,7 @@ import {
   useDeleteApiV1Products,
   useGetApiV1Products,
 } from "../../../api/types";
-import { Button, Checkbox, Flex, Table } from "@mantine/core";
+import { Button, Checkbox, Flex, Modal, Table } from "@mantine/core";
 import TablePagination from "../../../components/table-pagination.tsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
@@ -45,13 +45,11 @@ const ProductsList = () => {
     setSelectedRows([]);
   }, [productsQuery.data?.products]);
 
-  const selectedProduct = useMemo(() => {
+  const selectedEditId = useMemo(() => {
     if (selectedRows.length !== 1) return;
 
-    return productsQuery.data?.products.find(
-      (product) => product.id === selectedRows[0],
-    );
-  }, [productsQuery.data?.products, selectedRows]);
+    return selectedRows[0];
+  }, [selectedRows]);
 
   const rows =
     productsQuery.data?.products.map((p) => (
@@ -83,19 +81,29 @@ const ProductsList = () => {
 
   return (
     <>
-      <AddProduct
-        opened={addOpened}
-        onSave={productsQuery.refetch}
-        onClose={closeAdd}
-      />
-      {selectedProduct && (
+      <Modal opened={addOpened} onClose={closeAdd} title={"Add Product"}>
+        <AddProduct
+          onSave={async () => {
+            await productsQuery.refetch();
+            closeAdd();
+          }}
+          onClose={closeAdd}
+        />
+      </Modal>
+      <Modal
+        opened={editOpened && !!selectedEditId}
+        onClose={closeEdit}
+        title={"Edit Product"}
+      >
         <EditProduct
-          product={selectedProduct}
-          opened={editOpened}
-          onSave={productsQuery.refetch}
+          id={selectedEditId ?? ""}
+          onSave={async () => {
+            await productsQuery.refetch();
+            closeEdit();
+          }}
           onClose={closeEdit}
         />
-      )}
+      </Modal>
       <Flex direction="column" gap="xs">
         <Flex gap="xs">
           <Button color="green" onClick={openAdd}>

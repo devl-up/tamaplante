@@ -6,14 +6,14 @@ public struct Result
 
     public static Result Ok()
     {
-        return new Result();
+        return new();
     }
 
     public static Result Fail(string errorMessage)
     {
-        return new Result
+        return new()
         {
-            Error = new Error
+            Error = new()
             {
                 Description = errorMessage
             }

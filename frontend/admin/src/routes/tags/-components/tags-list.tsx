@@ -1,5 +1,5 @@
 import { useDeleteApiV1Tags, useGetApiV1Tags } from "../../../api/types";
-import { Button, Checkbox, Flex, Table } from "@mantine/core";
+import { Button, Checkbox, Flex, Modal, Table } from "@mantine/core";
 import TablePagination from "../../../components/table-pagination.tsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import AddTag from "./add-tag.tsx";
@@ -76,19 +76,27 @@ const TagsList = () => {
 
   return (
     <>
-      <AddTag
-        opened={addOpened}
-        onSave={tagsQuery.refetch}
-        onClose={closeAdd}
-      />
-      {selectedTag && (
+      {addOpened && (
+        <Modal opened={addOpened} onClose={closeAdd} title={"Add Tag"}>
+          <AddTag
+            onSave={async () => {
+              await tagsQuery.refetch();
+              closeAdd();
+            }}
+            onClose={closeAdd}
+          />
+        </Modal>
+      )}
+      <Modal opened={editOpened} onClose={closeEdit} title={"Edit Tag"}>
         <EditTag
           tag={selectedTag}
-          opened={editOpened}
-          onSave={tagsQuery.refetch}
+          onSave={async () => {
+            await tagsQuery.refetch();
+            closeEdit();
+          }}
           onClose={closeEdit}
         />
-      )}
+      </Modal>
       <Flex direction="column" gap="xs">
         <Flex gap="xs">
           <Button color="green" onClick={openAdd}>

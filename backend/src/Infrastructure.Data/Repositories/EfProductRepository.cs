@@ -24,6 +24,8 @@ internal sealed class EfProductRepository(AppDbContext context) : IProductReposi
 
     public Task<Product> GetByIdAsync(Guid id)
     {
-        return context.Set<Product>().FirstAsync(p => p.Id == id);
+        return context.Set<Product>()
+            .Include(p => p.Tags)
+            .FirstAsync(p => p.Id == id);
     }
 }

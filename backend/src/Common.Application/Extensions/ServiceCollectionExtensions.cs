@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
             var handlerInterface = handler.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICommandHandler<>));
             services.AddTransient(handlerInterface, handler);
         }
-        
+
         var queryHandlers = assembly.GetTypes()
             .Where(type => type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IQueryHandler<,>)))
             .ToList();

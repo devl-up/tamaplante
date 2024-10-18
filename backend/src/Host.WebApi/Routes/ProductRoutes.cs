@@ -22,6 +22,14 @@ internal static class ProductRoutes
             .Produces<GetProducts.Result>()
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
+        group.MapGet("{id:guid}", async ([FromServices] IQueryHandler<GetProduct.Query, GetProduct.ProductDto?> handler, [FromRoute] Guid id) =>
+            {
+                var result = await handler.HandleAsync(new(id));
+                return Results.Ok(result);
+            })
+            .Produces<GetProduct.ProductDto?>()
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
         group.MapPost("", async ([FromServices] ICommandHandler<AddProduct.Command> handler, [FromBody] AddProduct.Command command) =>
             {
                 var result = await handler.HandleAsync(command);

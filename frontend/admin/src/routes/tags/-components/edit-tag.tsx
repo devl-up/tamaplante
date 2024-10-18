@@ -5,27 +5,29 @@ import {
   usePutApiV1Tags,
 } from "../../../api/types";
 import { z } from "zod";
-import { Button, Flex, Modal, TextInput } from "@mantine/core";
+import { Button, Flex, TextInput } from "@mantine/core";
 import { handleProblemDetailsError } from "../../../utils/error-utils.ts";
+import { useEffect } from "react";
 
 interface EditTagProps {
-  readonly tag: CatalogTagsQueriesGetTagsDto;
-  readonly opened: boolean;
+  readonly tag?: CatalogTagsQueriesGetTagsDto;
   readonly onClose: () => void;
   readonly onSave: () => void;
 }
 
 const schema = z.object({
+  id: z.string().uuid(),
   name: z.string().min(1).max(20),
 });
 
 type Schema = z.infer<typeof schema>;
 
-const EditTag = ({ tag, opened, onClose, onSave }: EditTagProps) => {
-  const form = useForm<Schema>({
+const EditTag = ({ tag, onClose, onSave }: EditTagProps) => {
+  const { setValues, ...form } = useForm<Schema>({
     mode: "uncontrolled",
     initialValues: {
-      name: tag.name,
+      id: "",
+      name: "",
     },
     validate: zodResolver(schema),
   });
@@ -45,31 +47,34 @@ const EditTag = ({ tag, opened, onClose, onSave }: EditTagProps) => {
     await mutateAsync({
       data: {
         ...values,
-        id: tag.id,
       },
     });
   });
 
+  useEffect(() => {
+    if (tag) {
+      setValues({ ...tag });
+    }
+  }, [setValues, tag]);
+
   return (
-    <Modal opened={opened} onClose={onClose} title={"Edit Tag"}>
-      <form onSubmit={handleSubmit}>
-        <Flex direction="column" align="flex-start" gap="sm">
-          <TextInput
-            {...form.getInputProps("name")}
-            key={form.key("name")}
-            label="Name"
-            withAsterisk
-            placeholder="Choose a name"
-          />
-          <Flex gap="xs" justify="flex-end">
-            <Button type="submit">Save</Button>
-            <Button type="button" variant="default" onClick={onClose}>
-              Cancel
-            </Button>
-          </Flex>
+    <form onSubmit={handleSubmit}>
+      <Flex direction="column" align="stretch" gap="sm">
+        <TextInput
+          {...form.getInputProps("name")}
+          key={form.key("name")}
+          label="Name"
+          withAsterisk
+          placeholder="Choose a name"
+        />
+        <Flex gap="xs" justify="flex-end">
+          <Button type="button" variant="default" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit">Save</Button>
         </Flex>
-      </form>
-    </Modal>
+      </Flex>
+    </form>
   );
 };
 
