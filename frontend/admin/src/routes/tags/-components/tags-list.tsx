@@ -1,15 +1,18 @@
 import { useDeleteApiV1Tags, useGetApiV1Tags } from "../../../api/types";
 import { Button, Checkbox, Flex, Table } from "@mantine/core";
 import TablePagination from "../../../components/table-pagination.tsx";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import AddTag from "./add-tag.tsx";
 import { useDisclosure } from "@mantine/hooks";
+import EditTag from "./edit-tag.tsx";
 
 const TagsList = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [addOpened, { open: openAdd, close: closeAdd }] = useDisclosure(false);
+  const [editOpened, { open: openEdit, close: closeEdit }] =
+    useDisclosure(false);
 
   const tagsQuery = useGetApiV1Tags({
     pageIndex,
@@ -38,6 +41,12 @@ const TagsList = () => {
   useEffect(() => {
     setSelectedRows([]);
   }, [tagsQuery.data?.tags]);
+
+  const selectedTag = useMemo(() => {
+    if (selectedRows.length !== 1) return;
+
+    return tagsQuery.data?.tags.find((tag) => tag.id === selectedRows[0]);
+  }, [tagsQuery.data?.tags, selectedRows]);
 
   const rows =
     tagsQuery.data?.tags.map((t) => (
@@ -72,10 +81,25 @@ const TagsList = () => {
         onSave={tagsQuery.refetch}
         onClose={closeAdd}
       />
+      {selectedTag && (
+        <EditTag
+          tag={selectedTag}
+          opened={editOpened}
+          onSave={tagsQuery.refetch}
+          onClose={closeEdit}
+        />
+      )}
       <Flex direction="column" gap="xs">
         <Flex gap="xs">
           <Button color="green" onClick={openAdd}>
             ADD
+          </Button>
+          <Button
+            color="blue"
+            onClick={openEdit}
+            disabled={selectedRows.length !== 1}
+          >
+            EDIT
           </Button>
           <Button
             color="red"

@@ -23,4 +23,9 @@ internal sealed class EfTagRepository(AppDbContext context) : ITagRepository
     {
         context.Set<Tag>().RemoveRange(tags);
     }
+
+    public Task<Tag> GetByIdAsync(Guid id)
+    {
+        return context.Set<Tag>().FirstAsync(t => t.Id == id);
+    }
 }
