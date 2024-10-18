@@ -1,7 +1,7 @@
-import { useGetApiV1Tags } from "../../../api/types";
+import { useDeleteApiV1Tags, useGetApiV1Tags } from "../../../api/types";
 import { Button, Checkbox, Flex, Table } from "@mantine/core";
 import TablePagination from "../../../components/table-pagination.tsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AddTag from "./add-tag.tsx";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -15,6 +15,26 @@ const TagsList = () => {
     pageIndex,
     pageSize,
   });
+
+  const deleteMutation = useDeleteApiV1Tags({
+    mutation: {
+      onSuccess: async (_, variables) => {
+        const total = tagsQuery.data?.total ?? 0;
+        const newTotal = total - variables.data.tagIds.length;
+
+        if (pageIndex !== 0 && newTotal < pageIndex * pageSize + 1) {
+          setPageIndex(pageIndex - 1);
+        } else {
+          await tagsQuery.refetch();
+        }
+      },
+    },
+  });
+
+  const handleDelete = useCallback(async () => {
+    await deleteMutation.mutateAsync({ data: { tagIds: selectedRows } });
+  }, [deleteMutation, selectedRows]);
+
   useEffect(() => {
     setSelectedRows([]);
   }, [tagsQuery.data?.tags]);
@@ -56,6 +76,14 @@ const TagsList = () => {
         <Flex gap="xs">
           <Button color="green" onClick={openAdd}>
             ADD
+          </Button>
+          <Button
+            color="red"
+            disabled={!selectedRows.length}
+            loading={deleteMutation.isPending}
+            onClick={handleDelete}
+          >
+            DELETE
           </Button>
         </Flex>
         <Table>

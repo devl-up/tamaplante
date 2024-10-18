@@ -53,6 +53,10 @@ export interface CatalogTagsQueriesGetTagsResult {
   total: number;
 }
 
+export interface CatalogTagsDeleteTagsCommand {
+  tagIds: string[];
+}
+
 export interface CatalogTagsAddTagCommand {
   id: string;
   name: string;
@@ -652,6 +656,81 @@ export const usePostApiV1Tags = <
   TContext
 > => {
   const mutationOptions = getPostApiV1TagsMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
+
+export const deleteApiV1Tags = (
+  catalogTagsDeleteTagsCommand: BodyType<CatalogTagsDeleteTagsCommand>,
+  options?: SecondParameter<typeof customInstance>,
+) => {
+  return customInstance<void>(
+    {
+      url: `/api/v1/tags`,
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      data: catalogTagsDeleteTagsCommand,
+    },
+    options,
+  );
+};
+
+export const getDeleteApiV1TagsMutationOptions = <
+  TError = ErrorType<ProblemDetails>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteApiV1Tags>>,
+    TError,
+    { data: BodyType<CatalogTagsDeleteTagsCommand> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteApiV1Tags>>,
+  TError,
+  { data: BodyType<CatalogTagsDeleteTagsCommand> },
+  TContext
+> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteApiV1Tags>>,
+    { data: BodyType<CatalogTagsDeleteTagsCommand> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return deleteApiV1Tags(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteApiV1TagsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteApiV1Tags>>
+>;
+export type DeleteApiV1TagsMutationBody =
+  BodyType<CatalogTagsDeleteTagsCommand>;
+export type DeleteApiV1TagsMutationError = ErrorType<ProblemDetails>;
+
+export const useDeleteApiV1Tags = <
+  TError = ErrorType<ProblemDetails>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteApiV1Tags>>,
+    TError,
+    { data: BodyType<CatalogTagsDeleteTagsCommand> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteApiV1Tags>>,
+  TError,
+  { data: BodyType<CatalogTagsDeleteTagsCommand> },
+  TContext
+> => {
+  const mutationOptions = getDeleteApiV1TagsMutationOptions(options);
 
   return useMutation(mutationOptions);
 };

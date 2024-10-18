@@ -30,5 +30,14 @@ internal static class TagRoutes
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
+
+        group.MapDelete("", async ([FromServices] ICommandHandler<DeleteTags.Command> handler, [FromBody] DeleteTags.Command command) =>
+            {
+                var result = await handler.HandleAsync(command);
+                return result.ToHttp();
+            })
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
 }
