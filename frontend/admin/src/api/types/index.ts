@@ -53,6 +53,11 @@ export interface CatalogTagsQueriesGetTagsResult {
   total: number;
 }
 
+export interface CatalogTagsEditTagCommand {
+  id: string;
+  name: string;
+}
+
 export interface CatalogTagsDeleteTagsCommand {
   tagIds: string[];
 }
@@ -656,6 +661,80 @@ export const usePostApiV1Tags = <
   TContext
 > => {
   const mutationOptions = getPostApiV1TagsMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
+
+export const putApiV1Tags = (
+  catalogTagsEditTagCommand: BodyType<CatalogTagsEditTagCommand>,
+  options?: SecondParameter<typeof customInstance>,
+) => {
+  return customInstance<void>(
+    {
+      url: `/api/v1/tags`,
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      data: catalogTagsEditTagCommand,
+    },
+    options,
+  );
+};
+
+export const getPutApiV1TagsMutationOptions = <
+  TError = ErrorType<ProblemDetails>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putApiV1Tags>>,
+    TError,
+    { data: BodyType<CatalogTagsEditTagCommand> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof putApiV1Tags>>,
+  TError,
+  { data: BodyType<CatalogTagsEditTagCommand> },
+  TContext
+> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof putApiV1Tags>>,
+    { data: BodyType<CatalogTagsEditTagCommand> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return putApiV1Tags(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PutApiV1TagsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof putApiV1Tags>>
+>;
+export type PutApiV1TagsMutationBody = BodyType<CatalogTagsEditTagCommand>;
+export type PutApiV1TagsMutationError = ErrorType<ProblemDetails>;
+
+export const usePutApiV1Tags = <
+  TError = ErrorType<ProblemDetails>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putApiV1Tags>>,
+    TError,
+    { data: BodyType<CatalogTagsEditTagCommand> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof putApiV1Tags>>,
+  TError,
+  { data: BodyType<CatalogTagsEditTagCommand> },
+  TContext
+> => {
+  const mutationOptions = getPutApiV1TagsMutationOptions(options);
 
   return useMutation(mutationOptions);
 };

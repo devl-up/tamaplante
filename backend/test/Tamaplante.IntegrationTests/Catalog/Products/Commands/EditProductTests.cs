@@ -30,7 +30,7 @@ public sealed class EditProductTest(IntegrationFixture integrationFixture)
                 Price = 10
             };
 
-            await dbContext.AddAsync(product);
+            await dbContext.Set<Product>().AddAsync(product);
             await dbContext.SaveChangesAsync();
         }
 
