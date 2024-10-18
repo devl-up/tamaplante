@@ -18,21 +18,19 @@ public sealed class EditTagTest(IntegrationFixture integrationFixture)
         await integrationFixture.ResetDatabaseAsync();
         using var client = integrationFixture.Factory.CreateClient();
 
-        var tagId = Guid.NewGuid();
+        var tag = new Tag
+        {
+            Id = Guid.NewGuid(),
+            Name = "Name"
+        };
 
         await using (var dbContext = integrationFixture.CreateDbContext())
         {
-            var tag = new Tag
-            {
-                Id = tagId,
-                Name = "Name"
-            };
-
             await dbContext.Set<Tag>().AddAsync(tag);
             await dbContext.SaveChangesAsync();
         }
 
-        var command = new EditTag.Command(tagId, "NewName");
+        var command = new EditTag.Command(tag.Id, "NewName");
 
         // Act
         var response = await client.PutAsJsonAsync("api/v1/tags", command);
@@ -43,9 +41,15 @@ public sealed class EditTagTest(IntegrationFixture integrationFixture)
 
         await using (var dbContext = integrationFixture.CreateDbContext())
         {
-            var tag = await dbContext.Set<Tag>().FirstOrDefaultAsync(x => x.Id == tagId);
-            tag.Should().NotBeNull();
-            tag.Should().BeEquivalentTo(new Tag { Id = tagId, Name = command.Name });
+            var expectedTag = new Tag
+            {
+                Id = command.Id,
+                Name = command.Name
+            };
+
+            var actualTag = await dbContext.Set<Tag>().FirstOrDefaultAsync(x => x.Id == command.Id);
+            actualTag.Should().NotBeNull();
+            actualTag.Should().BeEquivalentTo(expectedTag);
         }
     }
 }

@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<AppDbContext>(builder => builder.UseNpgsql(connectionString));
         services.AddScoped<IUnitOfWork, EfUnitOfWork>();
         services.AddTransient<IQueryProcessor, EfQueryProcessor>();
-        
+
         services.AddTransient<IProductRepository, EfProductRepository>();
         services.AddTransient<ITagRepository, EfTagRepository>();
 

@@ -10,7 +10,7 @@ internal static class ResultExtensions
         return result.Error switch
         {
             null => Results.NoContent(),
-            _ => Results.Problem(result.Error.Description, statusCode: (int) HttpStatusCode.BadRequest)
+            _ => Results.Problem(result.Error.Description, statusCode: (int)HttpStatusCode.BadRequest)
         };
     }
 }

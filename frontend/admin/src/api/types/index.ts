@@ -20,8 +20,8 @@ import type {
 import { customInstance } from "../mutator/custom-instance";
 import type { ErrorType, BodyType } from "../mutator/custom-instance";
 export type GetApiV1TagsParams = {
-  pageIndex: number;
-  pageSize: number;
+  pageIndex?: number;
+  pageSize?: number;
 };
 
 export type GetApiV1ProductsParams = {
@@ -79,11 +79,25 @@ export interface CatalogProductsQueriesGetProductsResult {
   total: number;
 }
 
+export interface CatalogProductsQueriesGetProductTagDto {
+  id: string;
+  name: string;
+}
+
+export interface CatalogProductsQueriesGetProductProductDto {
+  description: string;
+  id: string;
+  name: string;
+  price: number;
+  tags: CatalogProductsQueriesGetProductTagDto[];
+}
+
 export interface CatalogProductsEditProductCommand {
   description: string;
   id: string;
   name: string;
   price: number;
+  tagIds: string[];
 }
 
 export interface CatalogProductsDeleteProductsCommand {
@@ -95,6 +109,7 @@ export interface CatalogProductsAddProductCommand {
   id: string;
   name: string;
   price: number;
+  tagIds: string[];
 }
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
@@ -468,8 +483,156 @@ export const useDeleteApiV1Products = <
   return useMutation(mutationOptions);
 };
 
+export const getApiV1ProductsId = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<CatalogProductsQueriesGetProductProductDto>(
+    { url: `/api/v1/products/${id}`, method: "GET", signal },
+    options,
+  );
+};
+
+export const getGetApiV1ProductsIdQueryKey = (id: string) => {
+  return [`/api/v1/products/${id}`] as const;
+};
+
+export const getGetApiV1ProductsIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiV1ProductsId>>,
+  TError = ErrorType<ProblemDetails>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiV1ProductsId>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetApiV1ProductsIdQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getApiV1ProductsId>>
+  > = ({ signal }) => getApiV1ProductsId(id, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApiV1ProductsId>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetApiV1ProductsIdQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiV1ProductsId>>
+>;
+export type GetApiV1ProductsIdQueryError = ErrorType<ProblemDetails>;
+
+export function useGetApiV1ProductsId<
+  TData = Awaited<ReturnType<typeof getApiV1ProductsId>>,
+  TError = ErrorType<ProblemDetails>,
+>(
+  id: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiV1ProductsId>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1ProductsId>>,
+          TError,
+          TData
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetApiV1ProductsId<
+  TData = Awaited<ReturnType<typeof getApiV1ProductsId>>,
+  TError = ErrorType<ProblemDetails>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiV1ProductsId>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1ProductsId>>,
+          TError,
+          TData
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetApiV1ProductsId<
+  TData = Awaited<ReturnType<typeof getApiV1ProductsId>>,
+  TError = ErrorType<ProblemDetails>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiV1ProductsId>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function useGetApiV1ProductsId<
+  TData = Awaited<ReturnType<typeof getApiV1ProductsId>>,
+  TError = ErrorType<ProblemDetails>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiV1ProductsId>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetApiV1ProductsIdQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
 export const getApiV1Tags = (
-  params: GetApiV1TagsParams,
+  params?: GetApiV1TagsParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -479,7 +642,7 @@ export const getApiV1Tags = (
   );
 };
 
-export const getGetApiV1TagsQueryKey = (params: GetApiV1TagsParams) => {
+export const getGetApiV1TagsQueryKey = (params?: GetApiV1TagsParams) => {
   return [`/api/v1/tags`, ...(params ? [params] : [])] as const;
 };
 
@@ -487,7 +650,7 @@ export const getGetApiV1TagsQueryOptions = <
   TData = Awaited<ReturnType<typeof getApiV1Tags>>,
   TError = ErrorType<ProblemDetails>,
 >(
-  params: GetApiV1TagsParams,
+  params?: GetApiV1TagsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiV1Tags>>, TError, TData>
@@ -519,7 +682,7 @@ export function useGetApiV1Tags<
   TData = Awaited<ReturnType<typeof getApiV1Tags>>,
   TError = ErrorType<ProblemDetails>,
 >(
-  params: GetApiV1TagsParams,
+  params: undefined | GetApiV1TagsParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiV1Tags>>, TError, TData>
@@ -539,7 +702,7 @@ export function useGetApiV1Tags<
   TData = Awaited<ReturnType<typeof getApiV1Tags>>,
   TError = ErrorType<ProblemDetails>,
 >(
-  params: GetApiV1TagsParams,
+  params?: GetApiV1TagsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiV1Tags>>, TError, TData>
@@ -559,7 +722,7 @@ export function useGetApiV1Tags<
   TData = Awaited<ReturnType<typeof getApiV1Tags>>,
   TError = ErrorType<ProblemDetails>,
 >(
-  params: GetApiV1TagsParams,
+  params?: GetApiV1TagsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiV1Tags>>, TError, TData>
@@ -572,7 +735,7 @@ export function useGetApiV1Tags<
   TData = Awaited<ReturnType<typeof getApiV1Tags>>,
   TError = ErrorType<ProblemDetails>,
 >(
-  params: GetApiV1TagsParams,
+  params?: GetApiV1TagsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiV1Tags>>, TError, TData>

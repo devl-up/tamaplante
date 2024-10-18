@@ -14,7 +14,7 @@ internal static class TagRoutes
         var group = api.MapGroup("tags")
             .WithTags("Tags");
 
-        group.MapGet("", async ([FromServices] IQueryHandler<GetTags.Query, GetTags.Result> handler, [FromQuery] int pageIndex, [FromQuery] int pageSize) =>
+        group.MapGet("", async ([FromServices] IQueryHandler<GetTags.Query, GetTags.Result> handler, [FromQuery] int? pageIndex, [FromQuery] int? pageSize) =>
             {
                 var result = await handler.HandleAsync(new(pageIndex, pageSize));
                 return Results.Ok(result);

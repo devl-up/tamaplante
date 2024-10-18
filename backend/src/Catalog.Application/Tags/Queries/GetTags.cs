@@ -6,7 +6,7 @@ namespace Catalog.Application.Tags.Queries;
 
 public static class GetTags
 {
-    public sealed record Query(int PageIndex, int PageSize) : IQuery<Result>;
+    public sealed record Query(int? PageIndex, int? PageSize) : IQuery<Result>;
 
     public sealed record Dto(Guid Id, string Name);
 
@@ -16,9 +16,14 @@ public static class GetTags
     {
         public async Task<Result> HandleAsync(Query query)
         {
-            var tags = await queryProcessor.Query<Tag>()
-                .Skip(query.PageIndex * query.PageSize)
-                .Take(query.PageSize)
+            var tagsQuery = queryProcessor.Query<Tag>();
+
+            if (query is { PageIndex: not null, PageSize: not null })
+                tagsQuery = tagsQuery
+                    .Skip(query.PageIndex.Value * query.PageSize.Value)
+                    .Take(query.PageSize.Value);
+
+            var tags = await tagsQuery
                 .OrderBy(t => t.Name)
                 .Select(t => new Dto(t.Id, t.Name))
                 .ToListAsync();

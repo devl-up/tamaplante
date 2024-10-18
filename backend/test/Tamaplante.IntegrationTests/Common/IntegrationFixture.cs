@@ -12,7 +12,7 @@ public sealed class IntegrationFixture : IAsyncLifetime
     private CustomWebApplicationFactory? _factory;
     private Respawner? _respawner;
 
-    public CustomWebApplicationFactory Factory => _factory ??= new CustomWebApplicationFactory(_sqlContainer.GetConnectionString());
+    public CustomWebApplicationFactory Factory => _factory ??= new(_sqlContainer.GetConnectionString());
 
     public async Task InitializeAsync()
     {
@@ -24,7 +24,7 @@ public sealed class IntegrationFixture : IAsyncLifetime
         await using var connection = new NpgsqlConnection(_sqlContainer.GetConnectionString());
         await connection.OpenAsync();
 
-        _respawner = await Respawner.CreateAsync(connection, new RespawnerOptions
+        _respawner = await Respawner.CreateAsync(connection, new()
         {
             DbAdapter = DbAdapter.Postgres
         });
@@ -47,7 +47,7 @@ public sealed class IntegrationFixture : IAsyncLifetime
     public AppDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql(_sqlContainer.GetConnectionString()).Options;
-        return new AppDbContext(options);
+        return new(options);
     }
 }
 
